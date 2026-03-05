@@ -1,0 +1,129 @@
+.container {
+    position: relative;
+    width: 100%;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 2rem 0;
+    display: flex;
+    justify-content: center;
+}
+
+.mapSvg {
+    width: 100%;
+    height: auto;
+    overflow: visible;
+    filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.05));
+}
+
+.pathBase {
+    fill: none;
+    stroke: #e0e7ff;
+    stroke-width: 40;
+    stroke-linecap: round;
+}
+
+.pathGradient {
+    fill: none;
+    stroke: url(#gradientPath);
+    stroke-width: 16;
+    stroke-linecap: round;
+    stroke-dasharray: 1000;
+    stroke-dashoffset: 0;
+    animation: dash 20s linear infinite;
+}
+
+@keyframes dash {
+    from { stroke-dashoffset: 1000; }
+    to { stroke-dashoffset: 0; }
+}
+
+.nodeGroup {
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.nodeGroup:hover {
+    transform: scale(1.1);
+}
+
+.nodeCircle {
+    fill: white;
+    stroke-width: 4;
+    transition: all 0.3s ease;
+}
+
+.locked .nodeCircle {
+    fill: #f3f4f6; /* gray-100 */
+    stroke: #d1d5db; /* gray-300 */
+}
+
+.active .nodeCircle {
+    fill: white;
+    stroke: #14b8a6; /* teal-500 */
+    filter: drop-shadow(0 0 8px rgba(20, 184, 166, 0.5));
+}
+
+.completed .nodeCircle {
+    fill: #14b8a6; /* teal-500 */
+    stroke: #14b8a6; /* teal-500 */
+}
+
+.nodeIcon {
+    fill: #4b5563; /* gray-600 */
+    font-size: 14px;
+    font-weight: bold;
+    text-anchor: middle;
+    dominant-baseline: central;
+    pointer-events: none;
+}
+
+.active .nodeIcon {
+    fill: #14b8a6; /* teal-500 */
+}
+
+.completed .nodeIcon {
+    fill: white;
+}
+
+/* Pulsing effect for active node */
+@keyframes pulse {
+    0% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.5); opacity: 0; }
+    100% { transform: scale(1); opacity: 0; }
+}
+
+.pulseCircle {
+    fill: #14b8a6; /* teal-500 */
+    opacity: 0.2;
+    animation: pulse 2s infinite;
+    transform-origin: center;
+    display: none;
+}
+
+.active .pulseCircle {
+    display: block;
+}
+
+/* Tooltip/Label */
+.nodeLabel {
+    background: white;
+    padding: 8px 12px;
+    border-radius: 0.375rem; /* radius-md */
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    position: absolute;
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: #111827; /* gray-900 */
+    pointer-events: none;
+    opacity: 0;
+    transform: translateY(10px);
+    transition: all 0.2s ease;
+    white-space: nowrap;
+    z-index: 10;
+}
+
+.nodeGroup:hover+.nodeLabel,
+.nodeGroup:focus+.nodeLabel {
+    opacity: 1;
+    transform: translateY(0);
+}

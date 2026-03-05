@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/Button';
 import { mockAssessmentTasks } from '@/lib/mockData';
 import { Brain, Clock, CheckCircle, Lock } from 'lucide-react';
 import Link from 'next/link';
+import AssessmentRoadmap from '@/components/assessment/AssessmentRoadmap';
 
 export default function AssessmentPage() {
     return (
@@ -51,6 +52,28 @@ export default function AssessmentPage() {
                         </CardContent>
                     </Card>
 
+                    {/* Assessment Journey (Roadmap) */}
+                    <div className="mb-12">
+                        <div className="flex items-center justify-between mb-6">
+                            <div>
+                                <h2 className="text-2xl font-display font-bold text-gray-900 mb-1">
+                                    Your Assessment Journey
+                                </h2>
+                                <p className="text-gray-600">
+                                    Follow your personalized path to master cognitive bias awareness.
+                                </p>
+                            </div>
+                        </div>
+
+                        <div className="bg-white rounded-2xl p-8 shadow-sm min-h-[500px] flex items-center justify-center relative overflow-hidden">
+                            {/* Radial gradient background similar to original */}
+                            <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,_#f9fafb_0%,_#f3f4f6_100%)] opacity-50"></div>
+                            <div className="relative z-10 w-full">
+                                <AssessmentRoadmap />
+                            </div>
+                        </div>
+                    </div>
+
                     {/* Assessment Grid */}
                     <div className="grid md:grid-cols-2 gap-6">
                         {mockAssessmentTasks.map((task, index) => {
@@ -62,9 +85,9 @@ export default function AssessmentPage() {
                                     <CardHeader>
                                         <div className="flex items-start justify-between mb-4">
                                             <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${gradient === 'teal' ? 'bg-teal-600' :
-                                                    gradient === 'coral' ? 'bg-coral-500' :
-                                                        gradient === 'purple' ? 'bg-purple-600' :
-                                                            'bg-gray-600'
+                                                gradient === 'coral' ? 'bg-coral-500' :
+                                                    gradient === 'purple' ? 'bg-purple-600' :
+                                                        'bg-gray-600'
                                                 }`}>
                                                 {task.completed ? (
                                                     <CheckCircle className="w-6 h-6 text-white" />
