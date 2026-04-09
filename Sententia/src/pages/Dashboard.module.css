@@ -1,3 +1,7 @@
+.dashboardWrapper {
+    position: relative;
+}
+
 .dashboard {
     display: flex;
     flex-direction: column;
@@ -182,8 +186,144 @@
     color: var(--color-text-secondary);
 }
 
+.privacyPanel {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+}
+
+.privacyPanel p {
+    color: var(--color-text-secondary);
+    font-size: 0.94rem;
+}
+
+.policyExpanded {
+    border-top: 1px solid rgba(0, 0, 0, 0.08);
+    padding-top: var(--space-4);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    max-height: 320px;
+    overflow: auto;
+}
+
+.policySectionCompact h4 {
+    font-size: 0.95rem;
+    margin-bottom: 0.25rem;
+}
+
+.policySectionCompact p {
+    font-size: 0.86rem;
+}
+
+.privacyFootnote {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    color: var(--color-text-secondary);
+    font-size: 0.8rem;
+}
+
+.integrationFootnote {
+    color: var(--color-text-secondary);
+    font-size: 0.78rem;
+}
+
+.modalOverlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+    padding: var(--space-4);
+    backdrop-filter: blur(2px);
+}
+
+.modalCard {
+    width: min(760px, 96vw);
+    max-height: min(760px, 92vh);
+    background: white;
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-premium);
+    display: flex;
+    flex-direction: column;
+}
+
+.modalHeader {
+    padding: var(--space-6);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.modalHeader h2 {
+    margin-bottom: var(--space-2);
+}
+
+.modalHeader p {
+    color: var(--color-text-secondary);
+}
+
+.modalBody {
+    overflow: auto;
+    padding: var(--space-6);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+}
+
+.policySection h3 {
+    font-size: 1rem;
+    margin-bottom: 0.35rem;
+}
+
+.policySection p {
+    color: var(--color-text-secondary);
+    font-size: 0.93rem;
+}
+
+.modalFooter {
+    border-top: 1px solid rgba(0, 0, 0, 0.08);
+    padding: var(--space-4) var(--space-6);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--space-4);
+}
+
+.modalHint {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    color: var(--color-text-secondary);
+    font-size: 0.86rem;
+}
+
+.modalActions {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+}
+
 @media (max-width: 1024px) {
     .chartSection {
         grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 768px) {
+    .modalFooter {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .modalCard {
+        max-height: 94vh;
+    }
+
+    .modalActions {
+        width: 100%;
+        flex-direction: column;
+        align-items: stretch;
     }
 }
