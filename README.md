@@ -1,131 +1,175 @@
 # Sententia
 
-Sententia is a cognitive bias insight dashboard with:
+Sententia is a full-stack-style cognitive bias insight dashboard built with Next.js (frontend + application logic) and Supabase (database backend).
 
-- LocalStorage-based sign-in/sign-up for local development
-- Supabase-backed activity data (and optional registration metadata)
-- PIPEDA consent gating and audit logging
-- Bias insight rendering with Strategy, Proxy, and Repository patterns
+This implementation includes:
 
-## Architecture Map
+- LocalStorage-based user sign-up/sign-in for local development.
+- Supabase-backed activity/resource retrieval (with fallback seed data).
+- PIPEDA consent gate with audit logging behavior.
+- Strategy, Proxy, and Repository design patterns in the insight engine.
 
-### Core Domain + Pattern Classes
+## Tech Stack
 
-All core classes are implemented in [src/lib/profileEngine.ts](src/lib/profileEngine.ts):
+- Frontend: Next.js App Router + React + Tailwind CSS
+- Application Logic: TypeScript services and domain classes in `src/lib`
+- Database: Supabase Postgres
+
+## Class Coverage (Grading Map)
+
+This section maps your original design classes to implemented code.
+
+### Core Class Implementations
+
+In [src/lib/profileEngine.ts](src/lib/profileEngine.ts):
+
+- `ProfileProxy`
+  - Implements Proxy pattern.
+  - Wraps `RealProfileService`.
+  - Logs access/consent events via `PIPEDALogger` before delegation.
+
+- `RealProfileService`
+  - Service layer used by proxy.
+  - Reads profile and consent via repository.
+  - Updates consent record.
 
 - `UserProfileRepo`
-	- Repository pattern for profile and consent data
-	- Methods: `fetchProfileByUserId`, `getConsentRecord`, `updateConsentRecord`
-- `ImprovementActivityLog`
-	- Activity repository service sourcing from Supabase table `de_biasing_resources` when available, with fallback seed data
-	- Methods: `listAllActivities`, `findActivityByBias`, `findActivityById`
+  - Implements Repository pattern abstraction for user profile and consent records.
+  - Methods:
+    - `fetchProfileByUserId()`
+    - `getConsentRecord()`
+    - `updateConsentRecord()`
+
 - `PIPEDALogger`
-	- Consent/profile access audit logger
-	- Methods: `log`, `getLastLog`
-- `RealProfileService`
-	- Service orchestration for profile + consent + activity access
-	- Methods: `getProfileData`, `updateConsent`
-- `ProfileProxy`
-	- Proxy pattern layer that logs via `PIPEDALogger` before delegating to service
-	- Methods: `getProfileData`, `handleConsentUpdate`
+  - Implements consent/profile access audit log behavior.
+  - Methods:
+    - `log()`
+    - `getLastLog()`
+
 - `ProfileController`
-	- Controller entrypoint for view requests
-	- Method: `onViewProfile`
-- `AnchoringBiasStrategy` and `OverconfidenceStrategy`
-	- Strategy pattern implementations for score/severity mapping
+  - Controller entry point from UI.
+  - Method:
+    - `onViewProfile()`
 
-### Auth + Registration Providers
+- `AnchoringBiasStrategy`
+- `OverconfidenceStrategy`
+  - Implements Strategy pattern behavior for score/severity mapping.
 
-- Local auth/session store: [src/lib/authClient.ts](src/lib/authClient.ts)
-- Supabase client: [src/lib/supabaseClient.ts](src/lib/supabaseClient.ts)
-- Optional registration metadata helper: [src/lib/registrationRepo.ts](src/lib/registrationRepo.ts)
+- `ImprovementActivityLog`
+  - Implements activity repository/service for de-biasing resources.
+  - Methods:
+    - `listAllActivities()`
+    - `findActivityByBias()`
+    - `findActivityById()`
 
-### UI and Feature Zones
+### Domain Model Equivalents
 
-- Zone 1 (Registration & Consent Gate): [src/app/dashboard/page.tsx](src/app/dashboard/page.tsx)
-	- Blocking consent modal, scroll-to-bottom requirement, `I Agree` gate
-	- Consent action is routed through `ProfileProxy.handleConsentUpdate`
-- Zone 2 (Personal Profile & Bias Insight View): [src/app/dashboard/page.tsx](src/app/dashboard/page.tsx)
-	- Displays profile summary, bias cards, intensity bars, severity, rationale
-	- Detailed bias pages:
-		- [src/app/dashboard/insights/page.tsx](src/app/dashboard/insights/page.tsx)
-		- [src/app/dashboard/insights/[biasSlug]/page.tsx](src/app/dashboard/insights/[biasSlug]/page.tsx)
-- Zone 3 (Improvement Activity Log): [src/app/dashboard/page.tsx](src/app/dashboard/page.tsx)
-	- Filtered activities per bias from `ImprovementActivityLog`
-	- Activity pages:
-		- [src/app/dashboard/activities/page.tsx](src/app/dashboard/activities/page.tsx)
-		- [src/app/dashboard/activities/[activityId]/page.tsx](src/app/dashboard/activities/[activityId]/page.tsx)
+- `CognitiveProfile`:
+  - Implemented as typed payload `CognitiveProfilePayload` and repository-generated profile object in [src/lib/profileEngine.ts](src/lib/profileEngine.ts).
+- `CognitiveBias`:
+  - Implemented as typed item `CognitiveBiasInsight` in [src/lib/profileEngine.ts](src/lib/profileEngine.ts).
+- `ImprovementActivityLog`:
+  - Implemented as concrete class in [src/lib/profileEngine.ts](src/lib/profileEngine.ts).
 
-## Sequence Flow (Implementation vs Diagram)
+Note: `IBiasCalculationStrategy` is represented by concrete strategy classes and `strategyRegistry` instead of a separate explicit interface declaration.
 
-Implemented flow matches your sequence intent:
+## Sequence Diagram Alignment
 
-1. User lands on dashboard page.
-2. Dashboard resolves identity from local session (`authClient`).
-3. Dashboard optionally uses Supabase-backed resources for activities.
-4. Dashboard calls `profileRuntime.controller.onViewProfile(userId)`.
-5. `ProfileController` calls `ProfileProxy.getProfileData(userId)`.
-6. `ProfileProxy` writes audit event to `PIPEDALogger.log(userId, 'PROFILE_READ')`, then delegates.
-7. `RealProfileService.getProfileData` calls:
-	 - `UserProfileRepo.fetchProfileByUserId`
-	 - `UserProfileRepo.getConsentRecord`
-8. Consent gate evaluates local consent state and repository consent.
-9. On `I Agree`, dashboard calls `ProfileProxy.handleConsentUpdate`.
-10. `ProfileProxy` logs `CONSENT_UPDATED` and forwards to service/repository update.
-11. UI renders profile + insights + activity log.
+Implemented runtime flow (aligned to your sequence intent):
 
-## ConsentAuditLog Visibility
+1. User opens dashboard.
+2. UI calls `ProfileController.onViewProfile(userId)`.
+3. Controller calls `ProfileProxy.getProfileData(userId)`.
+4. Proxy logs with `PIPEDALogger.log(userId, 'PROFILE_READ')`.
+5. Proxy delegates to `RealProfileService.getProfileData(userId)`.
+6. Service calls:
+   - `UserProfileRepo.fetchProfileByUserId(userId)`
+   - `UserProfileRepo.getConsentRecord(userId)`
+7. UI checks consent state and displays blocking consent gate if required.
+8. On `I Agree`, UI calls `ProfileProxy.handleConsentUpdate()`.
+9. Proxy logs `CONSENT_UPDATED` and delegates to service/repository update.
+10. UI renders profile + bias insights + activity log.
 
-- User-visible indicators:
-	- PIPEDA compliance card/badge in dashboard
-	- Last audit timestamp display
-- Internal logger object:
-	- `profileRuntime.logger` in [src/lib/profileEngine.ts](src/lib/profileEngine.ts)
+## Zone Mapping (UI Responsibility)
 
-## Required Environment Variables
+### Zone 1 — Registration & Consent Gate
 
-Use [\.env.example](.env.example) as template:
+File: [src/app/dashboard/page.tsx](src/app/dashboard/page.tsx)
+
+- Blocking modal on first load.
+- Scroll-to-bottom required before enabling `I Agree`.
+- Consent update routed through proxy (logged).
+
+### Zone 2 — Personal Profile & Bias Insight View
+
+Files:
+
+- [src/app/dashboard/page.tsx](src/app/dashboard/page.tsx)
+- [src/app/dashboard/insights/page.tsx](src/app/dashboard/insights/page.tsx)
+- [src/app/dashboard/insights/[biasSlug]/page.tsx](src/app/dashboard/insights/[biasSlug]/page.tsx)
+
+Features:
+
+- Profile summary (`profileID`, generation date, summary).
+- Bias cards with intensity bar, severity badge, plain-English explanation.
+- Detailed bias pages with score rationale.
+
+### Zone 3 — Improvement Activity Log
+
+Files:
+
+- [src/app/dashboard/page.tsx](src/app/dashboard/page.tsx)
+- [src/app/dashboard/activities/page.tsx](src/app/dashboard/activities/page.tsx)
+- [src/app/dashboard/activities/[activityId]/page.tsx](src/app/dashboard/activities/[activityId]/page.tsx)
+
+Features:
+
+- Per-bias filtered activities.
+- 2-3 tailored exercises shown in dashboard zone.
+- Click-through full activity pages.
+
+## How Supabase Is Used
+
+Supabase is used as the database backend for resource-driven behavior:
+
+1. `de_biasing_resources` table is queried in `ImprovementActivityLog.listAllActivities()`.
+2. If rows are available, activities are rendered from Supabase data.
+3. If Supabase is unavailable or empty, fallback seed data is used.
+4. Optional registration metadata support is available in [src/lib/registrationRepo.ts](src/lib/registrationRepo.ts) and `registered_users` schema.
+
+## Environment Setup
+
+Use [\.env.example](.env.example) to create [\.env.local](.env.local).
+
+Required variables:
 
 - `NEXT_PUBLIC_SUPABASE_URL`
 - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
 
-### Quick Setup (Local Auth + Supabase)
+## Supabase Migration
 
-1. Create [\.env.local](.env.local) from [\.env.example](.env.example).
-2. Fill in all values (Auth0 and Supabase).
-3. Open Supabase SQL Editor and run:
-	- [supabase/migrations/20260409_init_sententia_tables.sql](supabase/migrations/20260409_init_sententia_tables.sql)
-4. Verify that these tables now exist:
-	- `registered_users`
-	- `de_biasing_resources`
-5. Start app:
-	- `npm run dev`
+Run this SQL in Supabase SQL Editor:
 
-## Supabase Tables Expected
+- [supabase/migrations/20260409_init_sententia_tables.sql](supabase/migrations/20260409_init_sententia_tables.sql)
 
-### `registered_users`
+This creates:
 
-- `auth_provider_id` (unique)
-- `full_name`
-- `email`
-- `role`
-- `consent_given`
-- `consent_date`
-- `last_login_at`
+- `registered_users` (with unique `auth_provider_id`)
+- `de_biasing_resources` (with seed activities)
 
-### `de_biasing_resources`
+## Security Note
 
-- `id`
-- `bias_type`
-- `title`
-- `description`
-- `duration`
-- `type`
-- `why_it_helps`
-- `steps` (array/json)
-- `reflection_prompt`
+- Do not place your Supabase project password or service-role secret in source files or README.
+- Only use the public anon key in `NEXT_PUBLIC_SUPABASE_ANON_KEY` for client-side access patterns.
+
+## Run Locally
+
+1. `npm install`
+2. Configure [\.env.local](.env.local)
+3. Run migration SQL in Supabase
+4. `npm run dev`
 
 ## Notes
 
-- If Supabase environment variables are missing, the app falls back to seeded mock activity data.
-- The dashboard title and navigation label use "Personal Profile Dashboard" as requested.
+- Dashboard label is set to Personal Profile Dashboard.
+- Consent audit state is visible via PIPEDA compliance indicators while full log remains internal.
