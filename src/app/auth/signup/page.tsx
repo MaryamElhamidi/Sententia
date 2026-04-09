@@ -5,11 +5,16 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
-import { Brain } from 'lucide-react';
-import Image from 'next/image';
+import { Brain, FileLock2 } from 'lucide-react';
+import { registerAccount } from '@/lib/authClient';
 
 export default function SignUpPage() {
     const router = useRouter();
+    const [error, setError] = useState('');
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [showConsentPolicy, setShowConsentPolicy] = useState(false);
+    const [policyReadAck, setPolicyReadAck] = useState(false);
+    const [policyScrollComplete, setPolicyScrollComplete] = useState(false);
     const [formData, setFormData] = useState({
         name: '',
         email: '',
@@ -20,11 +25,45 @@ export default function SignUpPage() {
         consentTerms: false,
     });
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleConsentScroll = (e: React.UIEvent<HTMLDivElement>) => {
+        const { scrollTop, scrollHeight, clientHeight } = e.currentTarget;
+        if (scrollTop + clientHeight >= scrollHeight - 8) {
+            setPolicyScrollComplete(true);
+        }
+    };
+
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        // Mock signup - in production, this would call an API
-        console.log('Signup data:', formData);
-        // Redirect to dashboard based on role
+
+        setError('');
+        if (formData.password !== formData.confirmPassword) {
+            setError('Passwords do not match.');
+            return;
+        }
+
+        if (!policyReadAck) {
+            setError('You must review and acknowledge the PIPEDA consent policy.');
+            return;
+        }
+
+        setIsSubmitting(true);
+        const consentDate = new Date().toISOString().slice(0, 10);
+
+        const result = registerAccount({
+            name: formData.name,
+            email: formData.email,
+            password: formData.password,
+            role: formData.role,
+            consentGiven: formData.consentData && formData.consentTerms && policyReadAck,
+            consentDate
+        });
+
+        if (!result.ok) {
+            setError(result.error || 'Unable to create account.');
+            setIsSubmitting(false);
+            return;
+        }
+
         if (formData.role === 'admin' || formData.role === 'manager') {
             router.push('/admin');
         } else {
@@ -134,6 +173,30 @@ export default function SignUpPage() {
 
                         {/* Consent Checkboxes */}
                         <div className="space-y-3 pt-2">
+                            <button
+                                type="button"
+                                className="w-full text-left p-3 rounded-xl border border-teal-200 bg-teal-50 text-teal-700 text-sm"
+                                onClick={() => setShowConsentPolicy(true)}
+                            >
+                                <span className="inline-flex items-center gap-2 font-medium">
+                                    <FileLock2 className="w-4 h-4" />
+                                    Review Digital Health Technology + PIPEDA consent policy
+                                </span>
+                            </button>
+
+                            <label className="flex items-start space-x-3 cursor-pointer">
+                                <input
+                                    type="checkbox"
+                                    checked={policyReadAck}
+                                    onChange={(e) => setPolicyReadAck(e.target.checked)}
+                                    className="mt-1 w-5 h-5 rounded border-gray-300 text-teal-600 focus:ring-teal-500"
+                                    required
+                                />
+                                <span className="text-sm text-gray-700">
+                                    I confirm I reviewed the PIPEDA consent policy and understand my rights.
+                                </span>
+                            </label>
+
                             <label className="flex items-start space-x-3 cursor-pointer">
                                 <input
                                     type="checkbox"
@@ -168,8 +231,12 @@ export default function SignUpPage() {
                             </label>
                         </div>
 
-                        <Button type="submit" variant="primary" className="w-full" size="lg">
-                            Create Account
+                        {error && (
+                            <p className="text-sm text-red-600">{error}</p>
+                        )}
+
+                        <Button type="submit" variant="primary" className="w-full" size="lg" disabled={isSubmitting}>
+                            {isSubmitting ? 'Creating Account...' : 'Create Account'}
                         </Button>
                     </form>
 
@@ -181,6 +248,78 @@ export default function SignUpPage() {
                     </p>
                 </div>
             </div>
+
+            {showConsentPolicy && (
+                <div className="fixed inset-0 bg-black/45 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+                    <div className="bg-white rounded-2xl shadow-2xl w-full max-w-3xl max-h-[88vh] flex flex-col">
+                        <div className="p-5 border-b border-gray-200">
+                            <h3 className="text-xl font-display font-bold text-gray-900">Digital Health Technology Informed Consent</h3>
+                            <p className="text-sm text-gray-600 mt-1">Scroll to the end to enable acknowledgement.</p>
+                        </div>
+
+                        <div className="p-5 overflow-y-auto max-h-[55vh] space-y-4 text-sm text-gray-700" onScroll={handleConsentScroll}>
+                            <section>
+                                <h4 className="font-semibold text-gray-900 mb-1">Purpose</h4>
+                                <p>This application collects cognitive task responses to identify potential cognitive biases. Data is processed by a machine learning model that categorizes patterns into bias profiles. The goal is personal development, not clinical diagnosis.</p>
+                            </section>
+                            <section>
+                                <h4 className="font-semibold text-gray-900 mb-1">What is collected</h4>
+                                <p>Task response times, answer patterns, and self-reported reflections. No medical data, no employment data.</p>
+                            </section>
+                            <section>
+                                <h4 className="font-semibold text-gray-900 mb-1">How it is used</h4>
+                                <p>Data trains and runs the bias classification model. Your profile is shown only to you. No data is sold or shared with third parties.</p>
+                            </section>
+                            <section>
+                                <h4 className="font-semibold text-gray-900 mb-1">Your rights under PIPEDA</h4>
+                                <p>You may withdraw consent at any time. Withdrawing removes your data from future processing but audit logs are retained per legal obligation. You may request a copy of your data or its deletion.</p>
+                            </section>
+                            <section>
+                                <h4 className="font-semibold text-gray-900 mb-1">Employment status</h4>
+                                <p>Participation does not affect your employment in any way.</p>
+                            </section>
+                            <section>
+                                <h4 className="font-semibold text-gray-900 mb-1">Risks</h4>
+                                <p>Bias labels are probabilistic, not definitive. Misidentification is possible. This is not a clinical or diagnostic tool.</p>
+                            </section>
+                            <section>
+                                <h4 className="font-semibold text-gray-900 mb-1">Benefits</h4>
+                                <p>You gain a personalized view of cognitive tendencies and access to targeted improvement activities.</p>
+                            </section>
+                            <section>
+                                <h4 className="font-semibold text-gray-900 mb-1">Data retention</h4>
+                                <p>Profile data retained for 12 months from last activity. Consent audit logs retained per PIPEDA requirements (minimum 1 year).</p>
+                            </section>
+                            <section>
+                                <h4 className="font-semibold text-gray-900 mb-1">Technology used</h4>
+                                <p>A supervised ML model categorizes responses into bias profiles. You are not making employment or health decisions based solely on this output.</p>
+                            </section>
+                        </div>
+
+                        <div className="p-4 border-t border-gray-200 flex items-center justify-between gap-3">
+                            <span className="text-xs text-gray-500">
+                                {policyScrollComplete ? 'Policy review complete.' : 'Scroll to the end to enable acknowledgement.'}
+                            </span>
+                            <div className="flex items-center gap-2">
+                                <Button type="button" variant="ghost" onClick={() => setShowConsentPolicy(false)}>
+                                    Close
+                                </Button>
+                                <Button
+                                    type="button"
+                                    variant="primary"
+                                    disabled={!policyScrollComplete}
+                                    onClick={() => {
+                                        setPolicyReadAck(true);
+                                        setShowConsentPolicy(false);
+                                    }}
+                                >
+                                    I Have Reviewed
+                                </Button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }

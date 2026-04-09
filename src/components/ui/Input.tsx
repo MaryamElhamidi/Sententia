@@ -15,6 +15,7 @@ export function Input({ label, error, className, ...props }: InputProps) {
                 </label>
             )}
             <input
+                suppressHydrationWarning
                 className={cn(
                     'w-full px-4 py-3 rounded-xl border-2 transition-colors duration-200',
                     'focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent',

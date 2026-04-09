@@ -6,18 +6,40 @@ import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Brain } from 'lucide-react';
+import { signInAccount } from '@/lib/authClient';
 
 export default function SignInPage() {
     const router = useRouter();
+    const [error, setError] = useState('');
+    const [isSubmitting, setIsSubmitting] = useState(false);
     const [formData, setFormData] = useState({
         email: '',
         password: '',
     });
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        // Mock signin - redirect to dashboard
-        router.push('/dashboard');
+
+        setError('');
+        setIsSubmitting(true);
+
+        const result = signInAccount({
+            email: formData.email,
+            password: formData.password
+        });
+
+        if (!result.ok) {
+            setError(result.error || 'Unable to sign in.');
+            setIsSubmitting(false);
+            return;
+        }
+
+        const role = result.session?.role;
+        if (role === 'admin' || role === 'manager') {
+            router.push('/admin');
+        } else {
+            router.push('/dashboard');
+        }
     };
 
     return (
@@ -80,6 +102,10 @@ export default function SignInPage() {
                             required
                         />
 
+                        {error && (
+                            <p className="text-sm text-red-600">{error}</p>
+                        )}
+
                         <div className="flex items-center justify-between text-sm">
                             <label className="flex items-center space-x-2 cursor-pointer">
                                 <input
@@ -93,8 +119,8 @@ export default function SignInPage() {
                             </Link>
                         </div>
 
-                        <Button type="submit" variant="primary" className="w-full" size="lg">
-                            Sign In
+                        <Button type="submit" variant="primary" className="w-full" size="lg" disabled={isSubmitting}>
+                            {isSubmitting ? 'Signing In...' : 'Sign In'}
                         </Button>
                     </form>
 

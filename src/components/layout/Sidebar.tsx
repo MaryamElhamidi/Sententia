@@ -2,8 +2,9 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { cn } from '@/lib/utils';
+import { clearSession } from '@/lib/authClient';
 import {
     Home,
     Brain,
@@ -11,7 +12,8 @@ import {
     Users,
     Settings,
     LogOut,
-    BarChart3
+    BarChart3,
+    ListChecks
 } from 'lucide-react';
 
 interface SidebarProps {
@@ -20,11 +22,13 @@ interface SidebarProps {
 
 export function Sidebar({ userRole }: SidebarProps) {
     const pathname = usePathname();
+    const router = useRouter();
 
     const candidateLinks = [
-        { href: '/dashboard', label: 'Overview', icon: Home },
+        { href: '/dashboard', label: 'Personal Profile Dashboard', icon: Home },
         { href: '/assessment', label: 'Assessments', icon: Brain },
         { href: '/dashboard/insights', label: 'My Insights', icon: User },
+        { href: '/dashboard/activities', label: 'De-biasing Activities', icon: ListChecks },
         { href: '/settings', label: 'Settings', icon: Settings },
     ];
 
@@ -75,7 +79,14 @@ export function Sidebar({ userRole }: SidebarProps) {
 
             {/* Logout */}
             <div className="p-4 border-t border-gray-200">
-                <button className="flex items-center space-x-3 px-4 py-3 rounded-xl text-gray-600 hover:bg-gray-50 hover:text-gray-900 w-full transition-all duration-200">
+                <button
+                    suppressHydrationWarning
+                    className="flex items-center space-x-3 px-4 py-3 rounded-xl text-gray-600 hover:bg-gray-50 hover:text-gray-900 w-full transition-all duration-200"
+                    onClick={() => {
+                        clearSession();
+                        router.push('/auth/signin');
+                    }}
+                >
                     <LogOut className="w-5 h-5" />
                     <span>Log out</span>
                 </button>
