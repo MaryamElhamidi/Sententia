@@ -37,26 +37,63 @@ const questions = [
     },
 ];
 
+/**
+ * OverconfidenceAssessment Component
+ * 
+ * Maps to the TaskUIView in the UML architecture. Handles capturing physical mouse/keyboard responses,
+ * mapping the user's behavioural data, and submitting it back to the DataCollectionService for processing.
+ */
 export default function OverconfidenceAssessment() {
     const router = useRouter();
     const [currentQuestion, setCurrentQuestion] = useState(0);
     const [answers, setAnswers] = useState<{ answer: boolean; confidence: number }[]>([]);
     const [currentAnswer, setCurrentAnswer] = useState<boolean | null>(null);
     const [currentConfidence, setCurrentConfidence] = useState(50);
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     const progress = ((currentQuestion + 1) / questions.length) * 100;
 
-    const handleNext = () => {
+    /**
+     * Primary action handler mapped to 'TaskUIView.submitResponse()' from UML.
+     * Collects answers and iteratively advances logic. When evaluating the final task,
+     * triggers the POST request to our newly constructed InsightEngine.
+     */
+    const handleNext = async () => {
         if (currentAnswer !== null) {
-            setAnswers([...answers, { answer: currentAnswer, confidence: currentConfidence }]);
+            // Append the latest behavioral choice selection to local state memory
+            const newAnswers = [...answers, { answer: currentAnswer, confidence: currentConfidence }];
+            setAnswers(newAnswers);
 
             if (currentQuestion < questions.length - 1) {
                 setCurrentQuestion(currentQuestion + 1);
                 setCurrentAnswer(null);
                 setCurrentConfidence(50);
             } else {
-                // Assessment complete
-                router.push('/dashboard');
+                // Assessment completed. Transition to loading state and submit to backend.
+                setIsSubmitting(true);
+                try {
+                    // Send the batch of BehaviouralData to the DataCollectionService
+                    const res = await fetch('/api/assessment/submit', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            taskId: 'overconfidence',
+                            responses: newAnswers
+                        })
+                    });
+                    
+                    if (res.ok) {
+                        router.push('/dashboard/insights');
+                    } else {
+                        console.error('Failed to submit assessment');
+                        setIsSubmitting(false);
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    setIsSubmitting(false);
+                }
             }
         }
     };
@@ -171,10 +208,10 @@ export default function OverconfidenceAssessment() {
                         <Button
                             variant="primary"
                             onClick={handleNext}
-                            disabled={currentAnswer === null}
+                            disabled={currentAnswer === null || isSubmitting}
                         >
-                            {currentQuestion === questions.length - 1 ? 'Complete' : 'Next'}
-                            <ArrowRight className="w-4 h-4 ml-2" />
+                            {isSubmitting ? 'Analyzing...' : (currentQuestion === questions.length - 1 ? 'Complete' : 'Next')}
+                            {!isSubmitting && <ArrowRight className="w-4 h-4 ml-2" />}
                         </Button>
                     </div>
 
