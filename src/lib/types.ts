@@ -94,6 +94,69 @@ export interface Team {
     updatedAt: Date;
 }
 
+// Team Formatting Module Types
+export interface IBiasProfile {
+    userId: string;
+    biasScore: number; // 0-100
+    lastAssessmentDate: Date;
+}
+
+export interface BiasProfile extends IBiasProfile {
+    primaryBias: BiasType;
+    riskLevel: 'low' | 'moderate' | 'high';
+}
+
+export interface TeamBiasScore {
+    teamId: string;
+    aggregateMetric: number; // 0-100, average team bias
+    highRiskCluster: BiasProfile[];
+    synergyMetric: number; // 0-100, team compatibility metric
+    lastCalculated: Date;
+}
+
+export interface LearningActivity {
+    id: string;
+    activityId: string;
+    title: string;
+    description: string;
+    targetBias: BiasType;
+    type: 'individual' | 'workshop';
+    duration: number; // minutes
+    difficulty: 'beginner' | 'intermediate' | 'advanced';
+    targetUsers?: string[]; // user IDs for individual modules
+    completed: boolean;
+    progress: number; // 0-100
+}
+
+export interface IndividualModule extends LearningActivity {
+    reflectionPrompts: string[];
+    resources: string[]; // URLs
+}
+
+export interface TeamWorkshop extends LearningActivity {
+    facilitator?: string;
+    groupSize: number;
+    objectives: string[];
+}
+
+export interface BalancedTeam {
+    teamId: string;
+    name: string;
+    members: BiasProfile[];
+    teamBiasScore: TeamBiasScore;
+    assignedActivities: LearningActivity[];
+    interventionHistory: InterventionRecord[];
+}
+
+export interface InterventionRecord {
+    id: string;
+    teamId: string;
+    timestamp: Date;
+    strategy: string;
+    activitiesAssigned: string[]; // activity IDs
+    outcome?: string;
+}
+
 export interface TeamAnalytics {
     teamId: string;
     biasDistribution: {

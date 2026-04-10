@@ -5,7 +5,13 @@ import {
     DebiasingActivity,
     Team,
     TeamAnalytics,
-    BiasType
+    BiasType,
+    BiasProfile,
+    TeamBiasScore,
+    LearningActivity,
+    BalancedTeam,
+    IndividualModule,
+    TeamWorkshop,
 } from './types';
 
 // Mock users
@@ -207,3 +213,191 @@ export const mockTeamAnalytics: TeamAnalytics = {
     ],
     balanceScore: 78,
 };
+
+// ============= TEAM FORMATTING MODULE MOCK DATA =============
+
+// Mock Bias Profiles for team members
+export const mockBiasProfiles: BiasProfile[] = [
+    {
+        userId: '1',
+        biasScore: 72,
+        lastAssessmentDate: new Date('2024-02-01'),
+        primaryBias: 'overconfidence',
+        riskLevel: 'high',
+    },
+    {
+        userId: '2',
+        biasScore: 45,
+        lastAssessmentDate: new Date('2024-01-28'),
+        primaryBias: 'anchoring',
+        riskLevel: 'moderate',
+    },
+    {
+        userId: '4',
+        biasScore: 38,
+        lastAssessmentDate: new Date('2024-01-25'),
+        primaryBias: 'herding',
+        riskLevel: 'low',
+    },
+    {
+        userId: '5',
+        biasScore: 65,
+        lastAssessmentDate: new Date('2024-02-03'),
+        primaryBias: 'lossAversion',
+        riskLevel: 'high',
+    },
+];
+
+// Mock Team Bias Score
+export const mockTeamBiasScore: TeamBiasScore = {
+    teamId: '1',
+    aggregateMetric: 55, // Average of team bias scores
+    highRiskCluster: mockBiasProfiles.filter((p) => p.riskLevel === 'high'),
+    synergyMetric: 72, // Team compatibility metric
+    lastCalculated: new Date('2024-02-05'),
+};
+
+// Mock Learning Activities (Individual & Workshop)
+export const mockLearningActivities: LearningActivity[] = [
+    {
+        id: '1',
+        activityId: 'pre-mortem-001',
+        title: 'Pre-Mortem Analysis Workshop',
+        description: 'Team exercise to imagine future failures and improve decision quality',
+        targetBias: 'overconfidence',
+        type: 'workshop',
+        duration: 60,
+        difficulty: 'intermediate',
+        targetUsers: ['1'],
+        completed: false,
+        progress: 0,
+    },
+    {
+        id: '2',
+        activityId: 'consider-opposite-001',
+        title: 'Consider the Opposite - Individual Deep Dive',
+        description: 'Learn to actively seek information that contradicts your initial assumptions',
+        targetBias: 'anchoring',
+        type: 'individual',
+        duration: 30,
+        difficulty: 'beginner',
+        targetUsers: ['2'],
+        completed: false,
+        progress: 0,
+    },
+    {
+        id: '3',
+        activityId: 'team-decision-framework-001',
+        title: 'Structured Decision-Making Framework',
+        description: 'Team workshop on implementing systematic approaches to business decisions',
+        targetBias: 'herding',
+        type: 'workshop',
+        duration: 90,
+        difficulty: 'advanced',
+        targetUsers: ['1', '2', '4', '5'],
+        completed: false,
+        progress: 0,
+    },
+    {
+        id: '4',
+        activityId: 'risk-assessment-001',
+        title: 'Risk & Reward Assessment',
+        description: 'Individual module on balancing risk preferences in decision-making',
+        targetBias: 'lossAversion',
+        type: 'individual',
+        duration: 45,
+        difficulty: 'intermediate',
+        targetUsers: ['5'],
+        completed: false,
+        progress: 0,
+    },
+];
+
+// Mock Balanced Team (combines all components)
+export const mockBalancedTeam: BalancedTeam = {
+    teamId: '1',
+    name: 'Product Development',
+    members: mockBiasProfiles,
+    teamBiasScore: mockTeamBiasScore,
+    assignedActivities: mockLearningActivities,
+    interventionHistory: [
+        {
+            id: 'int-001',
+            teamId: '1',
+            timestamp: new Date('2024-01-15'),
+            strategy: 'Cognitive Diversity Focus',
+            activitiesAssigned: ['1', '2'],
+            outcome: 'High engagement, improved team communication',
+        },
+    ],
+};
+
+// Mock Individual Modules
+export const mockIndividualModules: IndividualModule[] = [
+    {
+        id: '2',
+        activityId: 'consider-opposite-001',
+        title: 'Consider the Opposite - Individual Deep Dive',
+        description: 'Learn to actively seek information that contradicts your initial assumptions',
+        targetBias: 'anchoring',
+        type: 'individual',
+        duration: 30,
+        difficulty: 'beginner',
+        targetUsers: ['2'],
+        completed: false,
+        progress: 0,
+        reflectionPrompts: [
+            'What assumptions did you make about the problem?',
+            'What evidence contradicts your initial view?',
+            'How would a skeptic approach this situation?',
+        ],
+        resources: [
+            'https://example.com/debiasing-anchoring',
+            'https://example.com/case-study-anchoring',
+        ],
+    },
+];
+
+// Mock Team Workshops
+export const mockTeamWorkshops: TeamWorkshop[] = [
+    {
+        id: '1',
+        activityId: 'pre-mortem-001',
+        title: 'Pre-Mortem Analysis Workshop',
+        description: 'Team exercise to imagine future failures and improve decision quality',
+        targetBias: 'overconfidence',
+        type: 'workshop',
+        duration: 60,
+        difficulty: 'intermediate',
+        targetUsers: ['1', '2', '4', '5'],
+        completed: false,
+        progress: 0,
+        facilitator: 'Sarah Johnson',
+        groupSize: 4,
+        objectives: [
+            'Identify potential project risks',
+            'Improve decision calibration',
+            'Build team consensus on mitigation strategies',
+        ],
+    },
+    {
+        id: '3',
+        activityId: 'team-decision-framework-001',
+        title: 'Structured Decision-Making Framework',
+        description: 'Team workshop on implementing systematic approaches to business decisions',
+        targetBias: 'herding',
+        type: 'workshop',
+        duration: 90,
+        difficulty: 'advanced',
+        targetUsers: ['1', '2', '4', '5'],
+        completed: false,
+        progress: 0,
+        facilitator: 'Michael Chen',
+        groupSize: 4,
+        objectives: [
+            'Learn decision frameworks',
+            'Practice structured thinking',
+            'Reduce groupthink tendencies',
+        ],
+    },
+];
