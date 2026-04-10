@@ -1,0 +1,382 @@
+.dashboard {
+    background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+    min-height: 100vh;
+    padding: 2rem 0;
+}
+
+.container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 1rem;
+}
+
+.header {
+    margin-bottom: 2rem;
+}
+
+.header h1 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #1f2937;
+    margin: 0;
+}
+
+.subtitle {
+    color: #6b7280;
+    font-size: 1.1rem;
+    margin: 0.5rem 0 0 0;
+}
+
+/* Metrics Grid */
+.metricsGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.metricCard {
+    background: white;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+}
+
+.metricCard:hover {
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+    transform: translateY(-2px);
+}
+
+.metricTitle {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #6b7280;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 0.75rem;
+}
+
+.metricValue {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #1f2937;
+    margin-bottom: 1rem;
+}
+
+.metricUnit {
+    font-size: 1rem;
+    color: #9ca3af;
+    margin-left: 0.25rem;
+}
+
+.metricBar {
+    height: 8px;
+    background-color: #e5e7eb;
+    border-radius: 4px;
+    margin-bottom: 0.75rem;
+    overflow: hidden;
+    transition: width 0.3s ease;
+}
+
+.metricDescription {
+    font-size: 0.875rem;
+    color: #6b7280;
+    line-height: 1.4;
+}
+
+.riskList {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-top: 0.75rem;
+}
+
+.riskItem {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem;
+    background-color: #fef2f2;
+    border-radius: 6px;
+    font-size: 0.875rem;
+}
+
+.riskLabel {
+    color: #dc2626;
+    font-weight: 500;
+    text-transform: capitalize;
+}
+
+.riskScore {
+    color: #991b1b;
+    font-weight: 600;
+}
+
+/* Recommendations Section */
+.recommendationsSection {
+    background: white;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    border-left: 4px solid #3b82f6;
+}
+
+.recommendationsSection h2 {
+    margin: 0 0 1rem 0;
+    color: #1f2937;
+    font-size: 1.25rem;
+}
+
+.recommendationsList {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.recommendationItem {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    color: #374151;
+    font-size: 0.95rem;
+    line-height: 1.5;
+}
+
+.recommendationIcon {
+    color: #3b82f6;
+    font-weight: bold;
+    flex-shrink: 0;
+}
+
+/* Activities Section */
+.activitiesSection {
+    margin-bottom: 2rem;
+}
+
+.activitiesSection h2 {
+    margin: 0 0 1.5rem 0;
+    color: #1f2937;
+    font-size: 1.5rem;
+}
+
+.activitiesGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 1.5rem;
+}
+
+.activityCard {
+    background: white;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
+}
+
+.activityCard:hover {
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+    transform: translateY(-4px);
+}
+
+.activityHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 1rem;
+    gap: 1rem;
+}
+
+.activityHeader h3 {
+    margin: 0;
+    color: #1f2937;
+    font-size: 1.1rem;
+    flex: 1;
+}
+
+.activityType {
+    display: inline-block;
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 0.25rem 0.75rem;
+    border-radius: 6px;
+    white-space: nowrap;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.activityType.workshop {
+    background-color: #dbeafe;
+    color: #0c4a6e;
+}
+
+.activityType.individual {
+    background-color: #dcfce7;
+    color: #15803d;
+}
+
+.activityDescription {
+    color: #6b7280;
+    font-size: 0.95rem;
+    margin: 0 0 1rem 0;
+    line-height: 1.5;
+    flex: 1;
+}
+
+.activityMeta {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+    font-size: 0.85rem;
+    color: #6b7280;
+}
+
+.activityMeta span {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.activityMeta strong {
+    color: #1f2937;
+    font-weight: 600;
+}
+
+/* Progress Section */
+.progressSection {
+    margin-bottom: 1rem;
+}
+
+.progressLabel {
+    font-size: 0.85rem;
+    color: #6b7280;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+}
+
+.progressBar {
+    height: 6px;
+    background-color: #e5e7eb;
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.progressFill {
+    height: 100%;
+    background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+    transition: width 0.3s ease;
+}
+
+/* Buttons */
+.startButton,
+.workshopButton {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: none;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: auto;
+}
+
+.startButton {
+    background-color: #10b981;
+    color: white;
+}
+
+.startButton:hover {
+    background-color: #059669;
+}
+
+.workshopButton {
+    background-color: #3b82f6;
+    color: white;
+}
+
+.workshopButton:hover {
+    background-color: #2563eb;
+}
+
+.startButton:active,
+.workshopButton:active {
+    transform: scale(0.98);
+}
+
+/* Action Bar */
+.actionBar {
+    display: flex;
+    justify-content: center;
+    margin-top: 2rem;
+}
+
+.refreshButton {
+    padding: 0.75rem 2rem;
+    background-color: #6366f1;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.refreshButton:hover:not(:disabled) {
+    background-color: #4f46e5;
+}
+
+.refreshButton:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* Loading & Empty States */
+.loading {
+    background: white;
+    border-radius: 12px;
+    padding: 3rem;
+    text-align: center;
+    color: #6b7280;
+    font-size: 1.1rem;
+}
+
+.noActivities {
+    background: white;
+    border-radius: 12px;
+    padding: 2rem;
+    text-align: center;
+    color: #9ca3af;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .header h1 {
+        font-size: 2rem;
+    }
+
+    .metricsGrid {
+        grid-template-columns: 1fr;
+    }
+
+    .activitiesGrid {
+        grid-template-columns: 1fr;
+    }
+
+    .activityMeta {
+        grid-template-columns: 1fr;
+    }
+
+    .container {
+        padding: 0 0.75rem;
+    }
+
+    .header {
+        margin-bottom: 1.5rem;
+    }
+}

@@ -1,0 +1,391 @@
+.modalOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    padding: 1rem;
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+.modal {
+    background: white;
+    border-radius: 12px;
+    max-width: 600px;
+    width: 100%;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    position: relative;
+    animation: slideUp 0.3s ease;
+}
+
+@keyframes slideUp {
+    from {
+        transform: translateY(30px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.closeButton {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    color: #6b7280;
+    cursor: pointer;
+    z-index: 10;
+    transition: color 0.3s ease;
+    padding: 0;
+    width: 2rem;
+    height: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.closeButton:hover {
+    color: #1f2937;
+}
+
+/* Header */
+.header {
+    padding: 2rem;
+    padding-right: 3rem;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-radius: 12px 12px 0 0;
+}
+
+.badge {
+    display: inline-block;
+    background: rgba(255, 255, 255, 0.3);
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.header h2 {
+    margin: 0.5rem 0 0.5rem 0;
+    font-size: 1.75rem;
+    line-height: 1.3;
+}
+
+.biasTarget {
+    margin: 0.75rem 0 0 0;
+    font-size: 0.95rem;
+    opacity: 0.95;
+}
+
+.biasTarget strong {
+    text-transform: capitalize;
+}
+
+/* Content */
+.content {
+    padding: 2rem;
+}
+
+.section {
+    margin-bottom: 1.5rem;
+}
+
+.section h3 {
+    margin: 0 0 0.75rem 0;
+    color: #1f2937;
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+.section p {
+    margin: 0;
+    color: #6b7280;
+    line-height: 1.6;
+}
+
+/* Details Grid */
+.detailsGrid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    margin-top: 0.75rem;
+}
+
+.detailItem {
+    background: #f9fafb;
+    padding: 1rem;
+    border-radius: 8px;
+    border: 1px solid #e5e7eb;
+}
+
+.detailLabel {
+    display: block;
+    font-size: 0.85rem;
+    color: #9ca3af;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+.detailValue {
+    display: block;
+    font-size: 1rem;
+    color: #1f2937;
+    font-weight: 600;
+    text-transform: capitalize;
+}
+
+/* Objectives List */
+.objectivesList {
+    list-style: none;
+    padding: 0;
+    margin: 0.75rem 0 0 0;
+}
+
+.objectivesList li {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    color: #6b7280;
+    margin-bottom: 0.75rem;
+    line-height: 1.5;
+}
+
+.checkmark {
+    color: #10b981;
+    font-weight: bold;
+    flex-shrink: 0;
+    margin-top: 0.15rem;
+}
+
+/* Participants Section */
+.participantInfo {
+    margin: 0 0 0.75rem 0;
+    color: #6b7280;
+}
+
+.participantList {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-top: 0.75rem;
+}
+
+.participantBadge {
+    display: inline-block;
+    background: #dbeafe;
+    color: #0c4a6e;
+    padding: 0.5rem 0.75rem;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+/* Footer */
+.footer {
+    display: flex;
+    gap: 1rem;
+    padding: 1.5rem 2rem;
+    border-top: 1px solid #e5e7eb;
+    background: #f9fafb;
+    border-radius: 0 0 12px 12px;
+}
+
+.cancelButton,
+.startButton,
+.completeButton {
+    flex: 1;
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.cancelButton {
+    background-color: #e5e7eb;
+    color: #1f2937;
+}
+
+.cancelButton:hover {
+    background-color: #d1d5db;
+}
+
+.startButton {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    flex: 2;
+}
+
+.startButton:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+}
+
+.startButton:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.completeButton {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    color: white;
+}
+
+.completeButton:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px rgba(16, 185, 129, 0.3);
+}
+
+/* Active Content State */
+.activeContent {
+    padding: 2rem;
+    text-align: center;
+}
+
+.successIcon {
+    font-size: 4rem;
+    margin-bottom: 1rem;
+    animation: scaleUp 0.5s ease;
+}
+
+@keyframes scaleUp {
+    from {
+        transform: scale(0);
+    }
+    to {
+        transform: scale(1);
+    }
+}
+
+.activeContent h2 {
+    margin: 0 0 0.5rem 0;
+    color: #1f2937;
+    font-size: 1.5rem;
+}
+
+.activeMessage {
+    color: #6b7280;
+    margin-bottom: 1.5rem;
+}
+
+.workshopStatus {
+    background: #f9fafb;
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    text-align: left;
+}
+
+.statusItem {
+    margin-bottom: 1.25rem;
+}
+
+.statusItem:last-child {
+    margin-bottom: 0;
+}
+
+.statusItem h4 {
+    margin: 0 0 0.5rem 0;
+    color: #1f2937;
+    font-size: 0.95rem;
+    font-weight: 600;
+}
+
+.statusItem p {
+    margin: 0;
+    color: #6b7280;
+}
+
+.miniProgressBar {
+    height: 6px;
+    background-color: #e5e7eb;
+    border-radius: 3px;
+    overflow: hidden;
+    margin: 0.5rem 0;
+}
+
+.miniProgressFill {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+    animation: progress 2s ease;
+}
+
+@keyframes progress {
+    0% {
+        width: 0%;
+    }
+    50% {
+        width: 50%;
+    }
+    100% {
+        width: 100%;
+    }
+}
+
+.progressText {
+    margin-top: 0.5rem;
+    font-size: 0.85rem;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+    .modal {
+        max-width: 100%;
+        max-height: 100vh;
+        border-radius: 12px 12px 0 0;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+    }
+
+    .header {
+        padding: 1.5rem;
+        padding-right: 2.5rem;
+    }
+
+    .detailsGrid {
+        grid-template-columns: 1fr;
+    }
+
+    .footer {
+        flex-direction: column;
+    }
+
+    .footer button {
+        width: 100%;
+    }
+
+    .content {
+        padding: 1.5rem;
+    }
+}
